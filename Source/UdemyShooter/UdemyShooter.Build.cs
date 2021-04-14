@@ -8,7 +8,14 @@ public class UdemyShooter : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+		PublicDependencyModuleNames.AddRange(new string[] 
+		{ 
+			"Core",
+			"CoreUObject",
+			"Engine",
+			"InputCore",
+			"Niagara"
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
@@ -19,7 +26,8 @@ public class UdemyShooter : ModuleRules
 			"UdemyShooter/Public/Weapon",
 			"UdemyShooter/Public/UI",
 			"UdemyShooter/Public/Animations",
-			"UdemyShooter/Public/Pickups"
+			"UdemyShooter/Public/Pickups",
+			"UdemyShooter/Public/Weapon/Components"
 		});
 
 		// Uncomment if you are using Slate UI

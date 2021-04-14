@@ -1,9 +1,21 @@
 // Udemy Shooter Game. All Rights Reserved
 
-
 #include "Weapon/USRifleWeapon.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
+#include "Weapon/Components/USWeaponFXComponent.h"
+
+AUSRifleWeapon::AUSRifleWeapon()
+{
+	WeaponFXComponent = CreateDefaultSubobject<UUSWeaponFXComponent>("WeaponFXComponent");
+}
+
+void AUSRifleWeapon::BeginPlay()
+{
+	Super::BeginPlay();
+
+	check(WeaponFXComponent);
+}
 
 void AUSRifleWeapon::StartFire()
 {
@@ -37,10 +49,8 @@ void AUSRifleWeapon::MakeShoot()
 
 	if (HitResult.bBlockingHit && FVector::DotProduct(HitDirection, GetMuzzleWorldRotation().Vector()) > 0)
 	{
-		DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), HitResult.ImpactPoint, FColor::Red, false, 3.0f, 0, 3.0f);
-		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Red, false, 5.0f);
-
 		MakeDamage(HitResult);
+		WeaponFXComponent->PlayImpactFX(HitResult);
 	}
 	else
 	{

@@ -5,6 +5,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
+#include "Weapon/Components/USWeaponFXComponent.h"
 
 AUSProjectile::AUSProjectile()
 {
@@ -19,6 +20,8 @@ AUSProjectile::AUSProjectile()
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComponent");
 	MovementComponent->InitialSpeed = 2000.0f;
 	MovementComponent->ProjectileGravityScale = 0.0f;
+
+	WeaponFXComponent = CreateDefaultSubobject<UUSWeaponFXComponent>("WeaponFXComponent");
 }
 
 void AUSProjectile::BeginPlay()
@@ -27,6 +30,7 @@ void AUSProjectile::BeginPlay()
 
 	check(MovementComponent);
 	check(CollisionComponent);
+	check(WeaponFXComponent);
 
 	MovementComponent->Velocity = ShootDirection * MovementComponent->InitialSpeed;
 	CollisionComponent->OnComponentHit.AddDynamic(this, &AUSProjectile::OnProjectileHit);
@@ -53,7 +57,7 @@ void AUSProjectile::OnProjectileHit(
 		DoFullDamage);
 
 	DrawDebugSphere(GetWorld(), GetActorLocation(), DamageRadius, 24, FColor::Red, false, LifeSeconds);
-
+	WeaponFXComponent->PlayImpactFX(Hit);
 	Destroy();
 }
 

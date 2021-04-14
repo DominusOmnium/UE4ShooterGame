@@ -1,6 +1,5 @@
 // Udemy Shooter Game. All Rights Reserved
 
-
 #include "Components/USHealthComponent.h"
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
@@ -28,9 +27,11 @@ void UUSHealthComponent::BeginPlay()
 	}
 }
 
-void UUSHealthComponent::OnTakeAnyDamage(AActor *DamagedActor, float Damage, const UDamageType *DamageType, AController *InstigatedBy, AActor *DamageCauser)
+void UUSHealthComponent::OnTakeAnyDamage(
+	AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
-	if (Damage <= 0.0f || IsDead() || !GetWorld()) return;
+	if (Damage <= 0.0f || IsDead() || !GetWorld())
+		return;
 
 	SetHealth(Health - Damage);
 
@@ -43,7 +44,6 @@ void UUSHealthComponent::OnTakeAnyDamage(AActor *DamagedActor, float Damage, con
 	else if (AutoHeal)
 	{
 		GetWorld()->GetTimerManager().SetTimer(HealTimerHandle, this, &UUSHealthComponent::HealUpdate, HealUpdateTime, true, HealDelay);
-	
 	}
 }
 
@@ -51,7 +51,7 @@ void UUSHealthComponent::HealUpdate()
 {
 	SetHealth(Health + HealModifier);
 
-	if (FMath::IsNearlyEqual(Health, MaxHealth) && GetWorld())
+	if (IsHealthFull() && GetWorld())
 	{
 		GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
 	}
@@ -61,4 +61,18 @@ void UUSHealthComponent::SetHealth(float NewHealth)
 {
 	Health = FMath::Clamp(NewHealth, 0.0f, MaxHealth);
 	OnHealthChanged.Broadcast(Health);
+}
+
+bool UUSHealthComponent::TryToAddHealth(float HealthAmount)
+{
+	if (IsDead() || IsHealthFull())
+		return false;
+
+	SetHealth(Health + HealthAmount);
+	return true;
+}
+
+bool UUSHealthComponent::IsHealthFull() const
+{
+	return FMath::IsNearlyEqual(Health, MaxHealth);
 }
